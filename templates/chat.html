@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediJoy</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/5968/5968331.png" type="image/png">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"/>
+    
+</head>
+
+<body>
+    <div class="chat-app">
+        <div class="chat-header">
+            <div class="header-content">
+                <img src="https://cdn-icons-png.flaticon.com/128/5968/5968331.png" alt="Bot Avatar" class="bot-avatar">
+                <div class="header-text">
+                    <h1>MEDIJOY</h1>
+                    <p>AI Medical Chatbot</p>
+                </div>
+                <div class="online-status">
+                    <span class="online-dot"></span>
+                    <span>Online</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="messageFormeight" class="chat-messages">
+            <!-- Messages will appear here -->
+        </div>
+        
+        <div class="chat-input-container">
+            <form id="messageArea" class="chat-input-form">
+                <input type="text" id="text" name="msg" placeholder="Type your message..." autocomplete="off" required>
+                <button type="submit" id="send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $("#messageArea").on("submit", function(event) {
+                const date = new Date();
+                const hour = date.getHours();
+                const minute = date.getMinutes();
+                const str_time = hour+":"+minute;
+                var rawText = $("#text").val();
+
+                var userHtml = '<div class="message user-message">' +
+                                '<div class="message-content">' + rawText + '</div>' +
+                                '<div class="message-time">'+ str_time + '</div>' +
+                              '</div>';
+                
+                $("#text").val("");
+                $("#messageFormeight").append(userHtml);
+                $("#messageFormeight").scrollTop($("#messageFormeight")[0].scrollHeight);
+
+                $.ajax({
+                    data: {
+                        msg: rawText,	
+                    },
+                    type: "POST",
+                    url: "/get",
+                }).done(function(data) {
+                    var botHtml = '<div class="message bot-message">' +
+                                    '<img src="https://cdn-icons-png.flaticon.com/512/387/387569.png" alt="Bot Avatar" class="message-avatar">' +
+                                    '<div class="message-content">' + data + '</div>' +
+                                    '<div class="message-time">' + str_time + '</div>' +
+                                  '</div>';
+                    $("#messageFormeight").append(botHtml);
+                    $("#messageFormeight").scrollTop($("#messageFormeight")[0].scrollHeight);
+                });
+                event.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>
