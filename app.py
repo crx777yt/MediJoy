@@ -10,7 +10,7 @@ from src.prompt import *
 import openai
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', template_folder='templates')
 
 load_dotenv()
 
